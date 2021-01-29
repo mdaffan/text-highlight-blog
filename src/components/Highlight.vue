@@ -73,6 +73,7 @@ export default class Highlight extends Vue {
       this.range = selection.getRangeAt(0)
     }
     const { x, y, width } = selectionRange.getBoundingClientRect() // Get the x, y, and width of the selection
+
     if (!width) {
       // If width === 0 (i.e. no selection)    // Then, hide the menu
       this.showMenu = false

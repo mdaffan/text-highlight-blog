@@ -22,7 +22,7 @@ class Blog extends VuexModule {
 
   @Mutation
   saveBlogs(payload: any) {
-    this.allBlogs = payload.blogPosts
+    this.allBlogs = payload
   }
   @Mutation
   saveBlog(payload: BlogType) {
@@ -34,11 +34,12 @@ class Blog extends VuexModule {
     try {
       const response = await baseAxios.get('fakeData.json')
 
-      return response.data
+      return response.data.blogPosts
     } catch (err) {
       console.log(err)
     }
   }
+
   @Action({ commit: 'saveBlog' })
   async getBlogById(id: string) {
     console.log(id)

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card max-width="400">
+    <v-card min-height="400px" max-width="400">
       <v-img
         class="white--text align-end"
         height="200px"
@@ -16,7 +16,13 @@
       </v-card-subtitle>
 
       <v-card-text class="text--primary">
-        <p>{{ blogData.content }}</p>
+        <p>
+          {{
+            this.sanitizeHtml(blogData.content, {
+              allowedTags: [],
+            })
+          }}
+        </p>
       </v-card-text>
 
       <v-card-actions>
@@ -30,10 +36,12 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
+import sanitizeHtml from 'sanitize-html'
 @Component({})
 export default class Home extends Vue {
   @Prop({ default: () => ({}) })
   blogData!: any
+  sanitizeHtml = sanitizeHtml
 }
 </script>
 
