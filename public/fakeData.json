@@ -1,0 +1,11 @@
+{
+  "blogPosts": [
+    {
+      "id": "1",
+      "title": "Cool fact about JavaScript!!",
+      "content": "There Are Two Zeros. Usually, we use the positive value of zero. But there is a -0 as well! Because of the way how they are stringified, you won’t see them in the console: That’s because both (-0).toString() and (+0).toString() return 0. Going a bit deeper, we find out that they are actually equal",
+      "image": "https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80",
+      "createdDate": "12-03-2020"
+    }
+  ]
+}

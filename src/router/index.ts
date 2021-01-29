@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
+import ViewBlog from '@/views/BlogView.vue'
+import Test from '@/views/Test.vue'
 
 Vue.use(VueRouter)
 
@@ -9,6 +11,11 @@ const routes: Array<RouteConfig> = [
     path: '/',
     name: 'Home',
     component: Home,
+  },
+  {
+    path: '/blog/:id',
+    name: 'Blog',
+    component: ViewBlog,
   },
   {
     path: '/about',

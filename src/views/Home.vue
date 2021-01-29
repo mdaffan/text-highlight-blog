@@ -1,19 +1,32 @@
 <template>
   <v-container>
-    <BlogCard />
+    <div v-for="item in allBlogs" :key="item.id">
+      <BlogCard
+        @viewBlog="id => $router.push(`/blog/${id}`)"
+        :blogData="item"
+      />
+    </div>
   </v-container>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import HelloWorld from '@/components/HelloWorld.vue' // @ is an alias to /src
+
 import BlogCard from '@/components/BlogCard.vue' // @ is an alias to /src
+import { getModule } from 'vuex-module-decorators'
+import { BlogModule } from '@/store/modules/blog'
 
 @Component({
   components: {
-    HelloWorld,
     BlogCard,
   },
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  public allBlogs: any = []
+
+  async created() {
+    await BlogModule.getAllBlogs()
+    this.allBlogs = BlogModule.allBlogs
+  }
+}
 </script>
