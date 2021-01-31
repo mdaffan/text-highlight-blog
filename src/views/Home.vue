@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 
 import BlogCard from '@/components/BlogCard.vue' // @ is an alias to /src
 import BlogFields from '@/components/BlogFields.vue' // @ is an alias to /src
@@ -75,7 +75,13 @@ export default class Home extends Vue {
     // this.allBlogs = BlogModule.allBlogs
   }
   get allBlogs() {
-    return BlogModule.allBlogs
+    if (BlogModule.filters) {
+      return BlogModule.allBlogs.filter(item =>
+        item.title?.includes(BlogModule.filters),
+      )
+    } else {
+      return BlogModule.allBlogs
+    }
   }
   onDeleteBlog(id: string) {
     const arrayClone = BlogModule.allBlogs

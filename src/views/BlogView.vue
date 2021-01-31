@@ -3,9 +3,18 @@
     <v-row>
       <v-col cols="10" class="ma-auto" v-if="blogContent">
         <v-sheet class="pa-9" color="white" elevation="2">
-          <v-btn color="primary" @click="dialog = true" class="d-flex ml-auto"
-            >Edit</v-btn
-          >
+          <div class="d-flex mb-1">
+            <v-btn
+              outlined
+              class="d-flex-inline"
+              color=""
+              @click="$router.push('/')"
+              >Go Back</v-btn
+            >
+            <v-btn color="primary" @click="dialog = true" class="d-flex ml-auto"
+              >Edit</v-btn
+            >
+          </div>
           <div :class="['text-h2', 'mb-0']">{{ blogContent.title }}</div>
 
           <v-img
@@ -35,7 +44,17 @@
       >
         <template v-slot:default="dialog">
           <v-card>
-            <v-toolbar color="primary" dark>Edit Blog</v-toolbar>
+            <v-toolbar color="primary" dark
+              >Edit Blog
+              <v-btn
+                class="ml-auto"
+                color="error"
+                @click="dialog.value = false"
+              >
+                <v-icon>mdi-close</v-icon></v-btn
+              ></v-toolbar
+            >
+
             <v-card-text>
               <BlogFields
                 @saveFields="updateBlogData"
@@ -43,9 +62,6 @@
                 type="edit"
               />
             </v-card-text>
-            <v-card-actions class="justify-end">
-              <v-btn text @click="dialog = false">Close</v-btn>
-            </v-card-actions>
           </v-card>
         </template>
       </v-dialog>
@@ -123,9 +139,9 @@ export default class BlogView extends Vue {
           image,
           title,
         })
-      let highlights = BlogModule.highlights
-      highlights = highlights.filter(item => item.blog.id !== this.id)
-     await BlogModule.saveHighLights(highlights)
+        let highlights = BlogModule.highlights
+        highlights = highlights.filter(item => item.blog.id !== this.id)
+        await BlogModule.saveHighLights(highlights)
       }
     } else {
       await BlogModule.updateBlogContent({

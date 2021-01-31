@@ -16,7 +16,7 @@
 
     <!-- <p contenteditable v-html="content" @blur="onEdit"></p> -->
 
-    <v-btn color="accent" @click="save">
+    <v-btn outlined color="primary" @click="save">
       {{ type === 'edit' ? 'Save Changes' : 'Create Blog' }}
     </v-btn>
   </v-form>

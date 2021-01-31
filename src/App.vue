@@ -20,7 +20,9 @@
             dense
             flat
             hide-details
+            placeholder="Search Blogs"
             rounded
+            @input="filterBlogs"
             solo-inverted
           ></v-text-field>
         </v-responsive>
@@ -35,6 +37,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import HomePage from '@/views/Home.vue'
+import { BlogModule } from './store/modules/blog'
 
 @Component({
   components: {
@@ -46,6 +49,9 @@ export default class Home extends Vue {
     { label: 'Home', route: '/' },
     { label: 'Highlighted Words', route: '/highlighted-words' },
   ]
+  filterBlogs(e: string) {
+    BlogModule.searchBlogs(e)
+  }
 }
 </script>
 <style lang="scss">

@@ -17,9 +17,10 @@ interface BlogType {
 }
 @Module({ dynamic: true, store, name: 'blogs' })
 class Blog extends VuexModule {
-  public allBlogs: BlogType[] = []
-  public blog: BlogType = {}
+  allBlogs: BlogType[] = []
+  blog: BlogType = {}
   highlights: any[] = []
+  filters = ''
 
   @Mutation
   saveBlogs(payload: any) {
@@ -49,6 +50,10 @@ class Blog extends VuexModule {
       this.allBlogs = [...state]
     }
   }
+  @Mutation
+  saveFilters(filter: string) {
+    this.filters = filter
+  }
 
   @Action({ commit: 'saveBlogs', root: true })
   async getAllBlogs() {
@@ -56,6 +61,14 @@ class Blog extends VuexModule {
       const response = await baseAxios.get('fakeData.json')
 
       return response.data.blogPosts
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  @Action({ commit: 'saveFilters', root: true })
+  async searchBlogs(filter: string) {
+    try {
+      return filter
     } catch (err) {
       console.log(err)
     }
