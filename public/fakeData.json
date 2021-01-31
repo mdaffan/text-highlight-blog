@@ -6,6 +6,13 @@
       "content": "There Are Two Zeros. Usually, we use the positive value of zero. But there is a -0 as well! Because of the way how they are stringified, you won’t see them in the console: That’s because both (-0).toString() and (+0).toString() return 0. Going a bit deeper, we find out that they are actually equal",
       "image": "https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80",
       "createdDate": "12-03-2020"
+    },
+    {
+      "id": "2",
+      "title": "Lorem Ipsum",
+      "content": "On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains. ",
+      "image": "https://images.unsplash.com/photo-1611937187627-a427e75ecf65?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1608&q=80",
+      "createdDate": "13-03-2020"
     }
   ]
 }

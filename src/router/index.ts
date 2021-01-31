@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
 import ViewBlog from '@/views/BlogView.vue'
-import Test from '@/views/Test.vue'
+import HighlightedWords from '@/views/HighlightedWords.vue'
 
 Vue.use(VueRouter)
 
@@ -18,14 +18,19 @@ const routes: Array<RouteConfig> = [
     component: ViewBlog,
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/About.vue'),
+    path: '/highlighted-words',
+    name: 'HighlightedWords',
+    component: HighlightedWords,
   },
+  // {
+  //   path: '/about',
+  //   name: 'About',
+  //   // route level code-splitting
+  //   // this generates a separate chunk (about.[hash].js) for this route
+  //   // which is lazy-loaded when the route is visited.
+  //   component: () =>
+  //     import(/* webpackChunkName: "about" */ '../views/About.vue'),
+  // },
 ]
 
 const router = new VueRouter({

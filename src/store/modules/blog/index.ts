@@ -19,6 +19,7 @@ interface BlogType {
 class Blog extends VuexModule {
   public allBlogs: BlogType[] = []
   public blog: BlogType = {}
+  highlights: any[] = []
 
   @Mutation
   saveBlogs(payload: any) {
@@ -27,6 +28,26 @@ class Blog extends VuexModule {
   @Mutation
   saveBlog(payload: BlogType) {
     this.blog = payload
+  }
+  @Mutation
+  saveHighLights(payload: any) {
+    this.highlights = payload
+  }
+  get blogs() {
+    return this.allBlogs
+  }
+  get getHighLightedWords() {
+    return this.highlights
+  }
+  @Mutation
+  updateBlog({ payload, state }: { payload: BlogType; state: BlogType[] }) {
+    this.blog = payload
+
+    const index = state.findIndex(item => item.id === payload.id)
+    if (index !== -1) {
+      state[index] = { ...payload }
+      this.allBlogs = [...state]
+    }
   }
 
   @Action({ commit: 'saveBlogs', root: true })
@@ -49,6 +70,29 @@ class Blog extends VuexModule {
       const index = arrayClone.findIndex((item: BlogType) => item.id === id)
       if (index !== -1) return arrayClone[index]
       else return null
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  @Action({ commit: 'updateBlog', rawError: true, root: true })
+  async updateBlogContent(payload: BlogType) {
+    try {
+      const state = { ...(this.context.state as any).blog }
+      const arrayClone: BlogType[] = this.context.getters['blogs']
+      if (state.id === payload.id) {
+        return { payload, state: arrayClone }
+      } else return null
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  @Action({ commit: 'saveHighLights', rawError: true, root: true })
+  async addHighLightToBlog(payload: any) {
+    try {
+      const arrayClone: any[] = this.context.getters['getHighLightedWords']
+      arrayClone.push(payload)
+      // return [...arrayClone, ...payload]
+      return arrayClone
     } catch (err) {
       console.log(err)
     }

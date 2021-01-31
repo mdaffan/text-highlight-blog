@@ -1,21 +1,29 @@
 <template>
-  <v-container>
+  <v-container class="customContainer">
     <v-row>
-      <v-col v-if="blogContent">
-        <div :class="['text-h2', 'mb-0']">{{ blogContent.title }}</div>
+      <v-col cols="10" class="ma-auto" v-if="blogContent">
+        <v-sheet class="pa-9" color="white" elevation="2">
+          <v-btn color="primary" @click="dialog = true" class="d-flex ml-auto"
+            >Edit</v-btn
+          >
+          <div :class="['text-h2', 'mb-0']">{{ blogContent.title }}</div>
 
-        <v-img
-          class="white--text align-end"
-          :src="
-            blogContent.image
-              ? `${blogContent.image}`
-              : require('@/assets/noImage.png')
-          "
-        />
-        <p>{{ blogContent.createdDate }}</p>
-        <highlightable @share="onShare" @highlight="onHighlight">
-          <p v-html="blogContent.content" class="bolas"></p>
-        </highlightable>
+          <v-img
+            max-width="400"
+            max-height="400"
+            class="white--text ma-auto mt-5 mb-5"
+            :src="
+              blogContent.image
+                ? `${blogContent.image}`
+                : require('@/assets/noImage.png')
+            "
+          />
+
+          <p>{{ blogContent.createdDate }}</p>
+          <highlightable @share="onShare" @highlight="onHighlight">
+            <p v-html="blogContent.content" id="editor"></p>
+          </highlightable>
+        </v-sheet>
       </v-col>
       <div v-else>No blog found with this ID</div>
     </v-row>
@@ -25,16 +33,15 @@
         max-width="600"
         v-model="dialog"
       >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn color="primary" v-bind="attrs" v-on="on"
-            >From the bottom</v-btn
-          >
-        </template>
         <template v-slot:default="dialog">
           <v-card>
-            <v-toolbar color="primary" dark>Opening from the bottom</v-toolbar>
+            <v-toolbar color="primary" dark>Edit Blog</v-toolbar>
             <v-card-text>
-              <BlogFields type="edit" />
+              <BlogFields
+                @saveFields="updateBlogData"
+                :data="blogContents"
+                type="edit"
+              />
             </v-card-text>
             <v-card-actions class="justify-end">
               <v-btn text @click="dialog = false">Close</v-btn>
@@ -47,11 +54,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import Highlightable from '@/components/Highlight.vue'
 import BlogFields from '@/components/BlogFields.vue'
 import { BlogModule } from '@/store/modules/blog'
-
+import { v4 as uuidv4 } from 'uuid'
+import sanitizeHtml from 'sanitize-html'
 @Component({
   components: {
     Highlightable,
@@ -59,63 +67,170 @@ import { BlogModule } from '@/store/modules/blog'
   },
 })
 export default class BlogView extends Vue {
-  blogContent: any = null
   dialog = false
   get id() {
     return this.$route.params.id
   }
+  sanitizeHtml = sanitizeHtml
+  blogContent: any = {}
+  // Idea is to highlight content based on all the offsets(complex relationship) I have handy.
+  // replaceOffset(str: string, offsets: any[], tag = '') {
+  //   tag = tag || 'span'
+  //   if (str) {
+  //     offsets.reverse().forEach(element => {
+  //       str = str.replace(
+  //         new RegExp(
+  //           '(.{' + element[0] + '})(.{' + (element[1] - element[0]) + '})',
+  //         ),
+  //         '$1<' + tag + ' class="mark">$2</' + tag + '>',
+  //       )
+  //     })
+  //     return str
+  //   } else return str
+  // }
+
+  // getContent(content: string) {
+  //   let highlights = BlogModule.highlights
+  //   highlights = highlights.filter(item => item.blog.id === this.id)
+
+  //   let offsets = highlights.map(item => [item.startOffset, item.endOffset])
+  //   console.log(offsets)
+
+  //   let string = this.replaceOffset(content, offsets)
+  //   return string
+  // }
   async created() {
     // window.onmouseup = this.dula
     if (BlogModule.allBlogs.length === 0) await BlogModule.getAllBlogs()
-    if (this.id) {
-      await BlogModule.getBlogById(this.id)
-      this.blogContent = BlogModule.blog
-    }
+    await BlogModule.getBlogById(this.id)
+    this.blogContent = this.blogContents
   }
+  get blogContents() {
+    return BlogModule.blog
+  }
+  async updateBlogData({ content, image, title }: any) {
+    if (BlogModule.blog.content?.length !== content.length) {
+      if (
+        confirm(
+          'This will remove all the Highlights from this blog, Are you sure?',
+        )
+      ) {
+        await BlogModule.updateBlogContent({
+          ...BlogModule.blog,
+          content: this.sanitizeHtml(content, {
+            allowedTags: [],
+          }),
+          image,
+          title,
+        })
+      let highlights = BlogModule.highlights
+      highlights = highlights.filter(item => item.blog.id !== this.id)
+     await BlogModule.saveHighLights(highlights)
+      }
+    } else {
+      await BlogModule.updateBlogContent({
+        ...BlogModule.blog,
+        content,
+        image,
+        title,
+      })
+    }
 
+    this.dialog = false
+    this.blogContent = this.blogContents
+  }
   onShare(text: string, range: any) {
     console.log('share:', text)
   }
-  onHighlight(text: string, range: any) {
-    const userSelection: any = window.getSelection()
-    console.log('highlight:', text)
-    const node = this.dula2(range)
+
+  onHighlight(text: string, startOffset: number, endOffset: number) {
+    console.log(endOffset, startOffset)
+    let userSelection: any = window.getSelection()
     const range1 = userSelection.getRangeAt(0)
+    const containerEl = document.getElementById('editor')
+    const node = this.textHiglight(range1)
+
     range1.deleteContents()
     range1.insertNode(node)
-    const element = document.getElementsByClassName('bolas')[0]
+
+    // function highlightHTML(
+    //   content: string,
+    //   startoffset: number,
+    //   endoffset: number,
+    //   color: string,
+    // ) {
+    //   let className = 'mark'
+    //   console.log(
+    //     'Inside Function: ' + content.substring(startoffset, endoffset),
+    //   )
+    //   return content.replace(
+    //     content.substring(startoffset, endoffset),
+    //     '<span class="' + className + '">$&</span>',
+    //   )
+    // }
+
+    // userSelection = rangy.getSelection()
+    // console.log(range1)
     const state = [...BlogModule.allBlogs]
     const index = state.findIndex(item => item.id === this.id)
+    const getSnippedText = (wholeText = '') => {
+      if (startOffset <= 300) {
+        return {
+          snippedStartOffset: startOffset,
+          snippedEndOffset: endOffset,
+          snippedText: wholeText.substring(0, endOffset + 150),
+        }
+      } else {
+        console.log(wholeText.substring(startOffset - 150, endOffset + 150))
+        return {
+          snippedStartOffset: 153,
+          snippedEndOffset: 153 + (endOffset - startOffset),
+          snippedText: `...${wholeText.substring(
+            startOffset - 150,
+            endOffset + 150,
+          )}...`,
+        }
+      }
+    }
     if (index !== -1) {
-      state[index] = { ...state[index], content: element.innerHTML }
-      console.log(state)
-      BlogModule.saveBlogs(state)
+      const payload = {
+        blog: this.blogContents,
+        highlightId: uuidv4(),
+        text,
+        startOffset: startOffset,
+        endOffset: endOffset,
+        paragraph: containerEl?.innerText,
+        snippedConfig: getSnippedText(containerEl?.innerText),
+      }
+      BlogModule.addHighLightToBlog(payload)
+      //   // state[index] = { ...state[index], content: element.innerHTML }
+      BlogModule.updateBlogContent({
+        ...state[index],
+        content: containerEl?.innerHTML!,
+      })
     }
   }
-  dula2(range: any) {
+  mounted() {
+    console.log('Hurray')
+  }
+  get highLights() {
+    return BlogModule.highlights
+  }
+  textHiglight(range: any) {
     //Function that highlights a selection and makes it clickable
 
     //Create the new Node
-    const newNode = document.createElement('span')
+    const newNode = document.createElement('mark')
 
     // Make it highlight
     newNode.setAttribute('style', 'background-color: #3ebfbd;')
 
-    // Make it "Clickable"
-    newNode.onclick = () => {
-      if (confirm('do you want to delete it?')) {
-        this.deletenode(newNode)
-      } else {
-        alert(range)
-      }
-    }
-
     //Add Text for replacement (for multiple nodes only)
     // newNode.innerHTML += range;
-    newNode.appendChild(range.cloneContents())
+    newNode.appendChild(range.extractContents())
 
     //Apply Node around selection (used for individual nodes only)
-    range.surroundContents(newNode)
+    // range.surroundContents(newNode)
 
     return newNode
   }
@@ -123,10 +238,15 @@ export default class BlogView extends Vue {
     const contents = document.createTextNode(node.innerText)
     node.parentNode.replaceChild(contents, node)
   }
+  @Watch('highLights')
+  highlightText(data: any) {
+    console.log(data)
+  }
 }
 </script>
 
 <style scoped lang="scss">
+@import '@/styles/variables.scss';
 #textSelectionTooltipContainer {
   will-change: transform;
   position: absolute;
@@ -147,5 +267,11 @@ export default class BlogView extends Vue {
   background: none;
   cursor: pointer;
   margin: 0 2px;
+}
+::v-deep .mark {
+  background-color: #3ebfbd;
+}
+.customContainer {
+  margin-top: 64px;
 }
 </style>
