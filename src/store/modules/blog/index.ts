@@ -14,6 +14,7 @@ interface BlogType {
   content?: string
   createdDate?: string
   image?: string
+  author?: { id: string; name: string; country: string }
 }
 @Module({ dynamic: true, store, name: 'blogs' })
 class Blog extends VuexModule {
@@ -21,7 +22,11 @@ class Blog extends VuexModule {
   blog: BlogType = {}
   highlights: any[] = []
   filters = ''
-
+  author = {
+    id: '10',
+    name: 'John',
+    country: 'India',
+  }
   @Mutation
   saveBlogs(payload: any) {
     this.allBlogs = payload

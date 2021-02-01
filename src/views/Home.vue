@@ -9,54 +9,70 @@
         >
           <v-icon>mdi-plus</v-icon>
 
-          Create Blog
+          <Typography
+            size="medium"
+            color="white"
+            weight="normal"
+            label="Create Blog"
+          />
         </v-btn>
-        <v-row>
-          <v-col v-for="item in allBlogs" :key="item.id" cols="4">
-            <BlogCard
-              @deleteBlog="onDeleteBlog"
-              @viewBlog="id => $router.push(`/blog/${id}`)"
-              :blogData="item"
-            />
-          </v-col>
-        </v-row>
-        <v-col cols="auto">
-          <v-dialog
-            transition="dialog-bottom-transition"
-            max-width="600"
-            v-model="dialog"
-          >
-            <template v-slot:default="dialog">
-              <v-card>
-                <v-toolbar color="primary" class="text-center" dark
-                  >Create Blog
-                  <v-btn
-                    class="ml-auto"
-                    color="error"
-                    @click="dialog.value = false"
-                  >
-                    <v-icon>mdi-close</v-icon></v-btn
-                  ></v-toolbar
-                >
+        <div v-if="allBlogs.length">
+          <v-row>
+            <v-col v-for="item in allBlogs" :key="item.id" cols="4">
+              <BlogCard
+                @deleteBlog="onDeleteBlog"
+                @viewBlog="id => $router.push(`/blog/${id}`)"
+                :blogData="item"
+              />
+            </v-col>
+          </v-row>
+          <v-col cols="auto">
+            <v-dialog
+              transition="dialog-bottom-transition"
+              max-width="600"
+              v-model="dialog"
+            >
+              <template v-slot:default="dialog">
+                <v-card>
+                  <v-toolbar color="primary" class="text-center" dark>
+                    <Typography
+                      size="medium"
+                      color="white"
+                      weight="semiDark"
+                      label="Create a new Blog"
+                    />
 
-                <v-card-text>
-                  <BlogFields @saveFields="createBlog" type="create" />
-                </v-card-text>
-              </v-card>
-            </template>
-          </v-dialog>
-        </v-col>
+                    <v-btn
+                      class="ml-auto"
+                      color="error"
+                      @click="dialog.value = false"
+                    >
+                      <v-icon>mdi-close</v-icon></v-btn
+                    ></v-toolbar
+                  >
+
+                  <v-card-text>
+                    <BlogFields @saveFields="createBlog" type="create" />
+                  </v-card-text>
+                </v-card>
+              </template>
+            </v-dialog>
+          </v-col>
+        </div>
+        <Empty
+          v-else
+          message="It's empty here, Start with creating BlogPosts"
+        />
       </v-container>
     </v-main>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
 import BlogCard from '@/components/BlogCard.vue' // @ is an alias to /src
 import BlogFields from '@/components/BlogFields.vue' // @ is an alias to /src
-import { getModule } from 'vuex-module-decorators'
 import { BlogModule } from '@/store/modules/blog'
 import { v4 as uuidv4 } from 'uuid'
 @Component({
@@ -94,7 +110,12 @@ export default class Home extends Vue {
       BlogModule.saveBlogs(arrayClone)
     }
   }
-  createBlog({ content, image, title }: any) {
+
+  createBlog({
+    content,
+    image,
+    title,
+  }: Record<'content' | 'image' | 'title', string>) {
     const state = [...BlogModule.allBlogs]
     const date = new Date()
     state.push({
@@ -102,6 +123,7 @@ export default class Home extends Vue {
       image,
       title,
       createdDate: date.toDateString(),
+      author: BlogModule.author,
       id: uuidv4(),
     })
     BlogModule.saveBlogs(state)

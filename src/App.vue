@@ -2,7 +2,9 @@
   <v-app>
     <v-app-bar app color="white" flat>
       <v-container class="py-0 fill-height">
-        <v-avatar class="mr-10" color="grey darken-1" size="32"></v-avatar>
+        <v-avatar class="mr-10" color="" size="48">
+          <img :src="require('@/assets/blogLogo.jpg')"
+        /></v-avatar>
 
         <v-btn
           @click="$router.push(link.route)"
@@ -15,7 +17,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-responsive max-width="260">
+        <v-responsive v-if="$route.path === '/'" max-width="260">
           <v-text-field
             dense
             flat

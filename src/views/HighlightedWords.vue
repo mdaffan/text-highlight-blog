@@ -1,6 +1,6 @@
 <template>
   <v-main class="grey lighten-3">
-    <v-row>
+    <v-row v-if="Object.keys(highlightedWords).length">
       <v-col class="ma-auto" lg="8" md="10" sm="12" xs="12">
         <v-container>
           <v-row>
@@ -60,6 +60,10 @@
         </v-container>
       </v-col>
     </v-row>
+    <Empty
+      v-else
+      message="It's empty here, Please Highlight words and see them in action here"
+    />
   </v-main>
 </template>
 <script lang="ts">
@@ -76,21 +80,6 @@ export default class HighlightedWords extends Vue {
     return this.highlightedWords[this.activeWord]
   }
   getHighlightedWords(config: any) {
-    // function highlightHTML(
-    //   content: string,
-    //   startoffset: number,
-    //   endoffset: number,
-    //   color: string,
-    // ) {
-    //   let className = 'mark'
-    //   console.log(
-    //     'Inside Function: ' + content.substring(startoffset, endoffset),
-    //   )
-    //   return content.replace(
-    //     content.substring(startoffset, endoffset),
-    //     '<span class="' + className + '">$&</span>',
-    //   )
-    // }
     function replaceOffset(str: string, start: number, end: number, tag = '') {
       tag = tag || 'span'
 
@@ -122,6 +111,6 @@ export default class HighlightedWords extends Vue {
   white-space: normal !important;
 }
 ::v-deep .mark {
-  background-color: #3ebfbd;
+  background-color: $color-primary;
 }
 </style>

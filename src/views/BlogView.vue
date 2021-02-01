@@ -27,9 +27,21 @@
                 : require('@/assets/noImage.png')
             "
           />
+          <div class="d-flex justify-end">
+            <Typography
+              size="large"
+              weight="light"
+              :label="blogContent.createdDate"
+            />
 
-          <p>{{ blogContent.createdDate }}</p>
-          <highlightable @share="onShare" @highlight="onHighlight">
+            <Typography
+              size="large"
+              class="ml-1"
+              weight="light"
+              :label="blogContent.author && 'by ' + blogContent.author.name"
+            />
+          </div>
+          <highlightable @highlight="onHighlight">
             <p v-html="blogContent.content" id="editor"></p>
           </highlightable>
         </v-sheet>
@@ -70,7 +82,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import Highlightable from '@/components/Highlight.vue'
 import BlogFields from '@/components/BlogFields.vue'
 import { BlogModule } from '@/store/modules/blog'
@@ -88,7 +100,7 @@ export default class BlogView extends Vue {
     return this.$route.params.id
   }
   sanitizeHtml = sanitizeHtml
-  blogContent: any = {}
+  blogContent = {}
   // Idea is to highlight content based on all the offsets(complex relationship) I have handy.
   // replaceOffset(str: string, offsets: any[], tag = '') {
   //   tag = tag || 'span'
@@ -104,7 +116,10 @@ export default class BlogView extends Vue {
   //     return str
   //   } else return str
   // }
-
+  // @Watch('highLights')
+  // highlightText(data: any) {
+  //   console.log(data)
+  // }
   // getContent(content: string) {
   //   let highlights = BlogModule.highlights
   //   highlights = highlights.filter(item => item.blog.id === this.id)
@@ -124,7 +139,11 @@ export default class BlogView extends Vue {
   get blogContents() {
     return BlogModule.blog
   }
-  async updateBlogData({ content, image, title }: any) {
+  async updateBlogData({
+    content,
+    image,
+    title,
+  }: Record<'content' | 'title' | 'image', string>) {
     if (BlogModule.blog.content?.length !== content.length) {
       if (
         confirm(
@@ -141,7 +160,7 @@ export default class BlogView extends Vue {
         })
         let highlights = BlogModule.highlights
         highlights = highlights.filter(item => item.blog.id !== this.id)
-        await BlogModule.saveHighLights(highlights)
+        BlogModule.saveHighLights(highlights)
       }
     } else {
       await BlogModule.updateBlogContent({
@@ -154,9 +173,6 @@ export default class BlogView extends Vue {
 
     this.dialog = false
     this.blogContent = this.blogContents
-  }
-  onShare(text: string, range: any) {
-    console.log('share:', text)
   }
 
   onHighlight(text: string, startOffset: number, endOffset: number) {
@@ -219,7 +235,6 @@ export default class BlogView extends Vue {
         snippedConfig: getSnippedText(containerEl?.innerText),
       }
       BlogModule.addHighLightToBlog(payload)
-      //   // state[index] = { ...state[index], content: element.innerHTML }
       BlogModule.updateBlogContent({
         ...state[index],
         content: containerEl?.innerHTML!,
@@ -232,31 +247,20 @@ export default class BlogView extends Vue {
   get highLights() {
     return BlogModule.highlights
   }
-  textHiglight(range: any) {
-    //Function that highlights a selection and makes it clickable
-
+  textHiglight(range: Range) {
+    //Function that highlights a selection
     //Create the new Node
     const newNode = document.createElement('mark')
-
     // Make it highlight
     newNode.setAttribute('style', 'background-color: #3ebfbd;')
-
-    //Add Text for replacement (for multiple nodes only)
-    // newNode.innerHTML += range;
     newNode.appendChild(range.extractContents())
-
     //Apply Node around selection (used for individual nodes only)
     // range.surroundContents(newNode)
-
     return newNode
   }
   deletenode(node: any) {
     const contents = document.createTextNode(node.innerText)
     node.parentNode.replaceChild(contents, node)
-  }
-  @Watch('highLights')
-  highlightText(data: any) {
-    console.log(data)
   }
 }
 </script>

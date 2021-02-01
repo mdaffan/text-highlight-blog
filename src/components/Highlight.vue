@@ -6,20 +6,26 @@
       class="menu"
       @mousedown.prevent=""
     >
-      <v-icon v-if="notHighlightable" color="white darken-2">
+      <v-icon
+        style="cursor:not-allowed;"
+        v-if="notHighlightable"
+        color="white darken-2"
+      >
         mdi-close-octagon-outline
       </v-icon>
 
       <!-- <span @mousedown.prevent="handleAction('share')" class="item">
         Share
       </span> -->
-      <span
-        v-if="!notHighlightable"
+
+      <v-icon
         @mousedown.prevent="handleAction('highlight')"
-        class="item"
+        v-if="!notHighlightable"
+        style="cursor:pointer;"
+        color="white darken-2 "
       >
-        Highlight
-      </span>
+        mdi-pen
+      </v-icon>
       <!-- You can add more buttons here -->
     </div>
     <!-- The insterted text should be displayed here -->

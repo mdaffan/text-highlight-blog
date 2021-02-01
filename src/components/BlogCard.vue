@@ -23,11 +23,15 @@
       >
         <v-card-title>{{ blogData.title }}</v-card-title>
       </v-img>
+      <div class="d-flex">
+        <v-card-subtitle class="pb-0">
+          {{ blogData.createdDate }}
+        </v-card-subtitle>
 
-      <v-card-subtitle class="pb-0">
-        {{ blogData.createdDate }}
-      </v-card-subtitle>
-
+        <v-card-subtitle class="pb-0">
+          - by {{ blogData.author.name }}
+        </v-card-subtitle>
+      </div>
       <v-card-text class="text--primary textCard">
         <p>
           {{
