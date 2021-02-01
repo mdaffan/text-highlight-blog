@@ -145,7 +145,7 @@ export default class BlogView extends Vue {
     title,
   }: Record<'content' | 'title' | 'image', string>) {
     let highlights = BlogModule.highlights
-    highlights = highlights.filter(item => item.blog.id !== this.id)
+    highlights = highlights.filter(item => item.blog.id === this.id)
     if (
       BlogModule.blog.content?.length !== content.length &&
       highlights.length
