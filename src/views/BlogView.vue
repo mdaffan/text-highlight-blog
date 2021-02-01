@@ -163,7 +163,8 @@ export default class BlogView extends Vue {
           image,
           title,
         })
-
+        let highlights = BlogModule.highlights
+        highlights = highlights.filter(item => item.blog.id !== this.id)
         BlogModule.saveHighLights(highlights)
       }
     } else {
