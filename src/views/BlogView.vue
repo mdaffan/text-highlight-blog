@@ -46,7 +46,7 @@
           </highlightable>
         </v-sheet>
       </v-col>
-      <div v-else>No blog found with this ID</div>
+      <Empty v-else message="No Blog with this ID found." />
     </v-row>
     <v-col cols="auto">
       <v-dialog
@@ -144,7 +144,12 @@ export default class BlogView extends Vue {
     image,
     title,
   }: Record<'content' | 'title' | 'image', string>) {
-    if (BlogModule.blog.content?.length !== content.length) {
+    let highlights = BlogModule.highlights
+    highlights = highlights.filter(item => item.blog.id !== this.id)
+    if (
+      BlogModule.blog.content?.length !== content.length &&
+      highlights.length
+    ) {
       if (
         confirm(
           'This will remove all the Highlights from this blog, Are you sure?',
@@ -158,8 +163,7 @@ export default class BlogView extends Vue {
           image,
           title,
         })
-        let highlights = BlogModule.highlights
-        highlights = highlights.filter(item => item.blog.id !== this.id)
+
         BlogModule.saveHighLights(highlights)
       }
     } else {
