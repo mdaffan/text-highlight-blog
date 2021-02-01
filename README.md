@@ -16,7 +16,7 @@
 
 Vue.js(with TypeScript), Vuex(decorators for Strongly Typed Store), Scss, Eslint, Prettier
 
-## Project setup
+# Project setup
 
 ```
 yarn install
