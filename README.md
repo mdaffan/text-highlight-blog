@@ -2,6 +2,7 @@
 
 # Features
 
+- [x] List all BlogPosts with Filter feature.
 - [x] Create, Read, Update, Delete BlogPosts
 - [x] A page to View the blogpost and Highlight words
 - [x] Exact medium like Highlight feature, Which when a word is selected, Icon would appear above it to Highlight word.
@@ -19,17 +20,17 @@ Vue.js(with TypeScript), Vuex(decorators for Strongly Typed Store), Scss, Eslint
 # Project setup
 
 ```
-yarn install
+yarn install or npm i
 ```
 
 ### Compiles and hot-reloads for development
 
 ```
-yarn serve
+yarn serve or npm run serve
 ```
 
 ### Compiles and minifies for production
 
 ```
-yarn build
+yarn build or npm run build
 ```
