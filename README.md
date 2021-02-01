@@ -33,7 +33,3 @@ yarn serve
 ```
 yarn build
 ```
-
-```
-
-```
